@@ -7,7 +7,6 @@ on:
         description: '⚠️ WARNING: This will DELETE ALL files inside downloads/ folder. Click "Run workflow" only if you are sure.'
         required: false
         default: 'Read this warning before proceeding'
-        type: string
 
 jobs:
   delete:
@@ -15,5 +14,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Delete all files
-        run: rm -rf downloads/*
+
+      - name: Delete all files inside downloads/
+        run: |
+          rm -rf downloads/*
+          mkdir -p downloads
+
+      - name: Commit and push empty folder
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add downloads/
+          git commit -m "Empty downloads folder [skip ci]" || echo "No changes to commit"
+          git push
